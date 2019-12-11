@@ -21,15 +21,15 @@ These subnets have 254 ip addresses available each which should be more than eno
 Go to CloudFormation to see what is happening!
 
 Results:
- > VPCvpc-0adc34d6cb40367d7
- > Subnet 1subnet-096398da96466d1e1
- > Subnet 1 route table associationrtbassoc-09f34f64991059514
- > Subnet 2subnet-0c9416d4928830762
- > Subnet 2 route table associationrtbassoc-01891338d8b21c657
- > VPC Availability Zoneseu-west-1a, eu-west-1b, eu-west-1c
- > Internet gatewayigw-052800124935b19b3
- > Route tablertb-0c17747f71a6bc36c
- > Amazon EC2 routeEC2Co-Publi-1C1NSNJXHSV9Y
- > Virtual private gateway attachmentEC2Co-Attac-178W8U5Q798TK
+ * VPCvpc-0adc34d6cb40367d7
+ * Subnet 1subnet-096398da96466d1e1
+ * Subnet 1 route table associationrtbassoc-09f34f64991059514
+ * Subnet 2subnet-0c9416d4928830762
+ * Subnet 2 route table associationrtbassoc-01891338d8b21c657
+ * VPC Availability Zoneseu-west-1a, eu-west-1b, eu-west-1c
+ * Internet gatewayigw-052800124935b19b3
+ * Route tablertb-0c17747f71a6bc36c
+ * Amazon EC2 routeEC2Co-Publi-1C1NSNJXHSV9Y
+ * Virtual private gateway attachmentEC2Co-Attac-178W8U5Q798TK
 This also shows what has to be created to make all of this work.
 

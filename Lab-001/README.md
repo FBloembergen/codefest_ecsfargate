@@ -4,7 +4,7 @@
 
 ## ECR - Elastic Container Registry
 This is our repository for Docker Images. 
-You can find it under ECS  Amazon ECR  Repositories. Or type in ECR under Services. This directs you directly to the repository.
+You can find it under *ECS* --> *Amazon ECR* --> *Repositories*. Or type in ECR under Services. This directs you directly to the repository.
 
 Under Reposities you’ll find the repository helloflogo and when opening this you will only find 1 Image with tag: latest. For this course it is good enough to have only the latest tag. However I wouldn’t recommend to use latest. Except maybe for snapshots.
 Also keep in mind at any time no tag is given when loading an image ECS will pick latest.

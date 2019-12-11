@@ -15,8 +15,8 @@ With a task we define what we want to run and how to configure it.
 Go back to Amazon *ECS* --> *Task Definitions*. Or type in ECS under Services.  
 
 We are now going to create a task Manually.  
-Press Create new Task Definition  
-Select Fargate as our target. And press Next Step  
+Press *Create new Task Definition*  
+Select *Fargate* as our target. And press *Next Step*  
 
 !! Do note in all cases where you see Maarten rename this to your own name!!  
 It is just a name and not linked to your account.  

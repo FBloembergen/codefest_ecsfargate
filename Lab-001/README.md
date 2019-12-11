@@ -12,7 +12,7 @@ Also keep in mind at any time no tag is given when loading an image ECS will pic
 
 ## Task Definitions
 With a task we define what we want to run and how to configure it.  
-Go back to Amazon ECS  Task Definitions. Or type in ECS under Services.  
+Go back to Amazon *ECS* --> *Task Definitions*. Or type in ECS under Services.  
 
 We are now going to create a task Manually.  
 Press Create new Task Definition  

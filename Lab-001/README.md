@@ -21,29 +21,29 @@ Select Fargate as our target. And press Next Step
 !! Do note in all cases where you see Maarten rename this to your own name!!
 It is just a name and not linked to your account.
 
-**Task Definition Name:** Fargate<user> 
-**Task Role:**  ecsTaskExecutionRole 
-**Task execution role:**  ecsTaskExecutionRole 
+**Task Definition Name:** Fargate<user>  
+**Task Role:**  ecsTaskExecutionRole  
+**Task execution role:**  ecsTaskExecutionRole  
 
-**Task memory:** 0.5 
-**Task CPU:** 0.25 
+**Task memory:** 0.5  
+**Task CPU:** 0.25  
 
-Then we will find a blue button:  “Add container”. 
-This is to configure the container. 
+Then we will find a blue button:  “Add container”.  
+This is to configure the container.  
 
-**ContainerName:** <user> 
-**Image:**  779717477382.dkr.ecr.eu-west-1.amazonaws.com/helloflogo 
-**PortMapping – ContainerPort:** 8080 
+**ContainerName:** <user>  
+**Image:**  779717477382.dkr.ecr.eu-west-1.amazonaws.com/helloflogo  
+**PortMapping – ContainerPort:** 8080  
 
 The last thing we set are container environment settings:
 
-Search for Environment Variables and add the following 2 lines
-**Key:** path   **value:** /maarten/:name
-**Key:** port   **value:** 8080
+Search for Environment Variables and add the following 2 lines  
+**Key:** path   **value:** /maarten/:name  
+**Key:** port   **value:** 8080  
 
 
 ## Additional information:
-A lot has been created for us:
-**Task:** https://eu-west-1.console.aws.amazon.com/ecs/home?region=eu-west-1#/taskDefinitions/FargateMaarten
-**Logging:** https://eu-west-1.console.aws.amazon.com/cloudwatch/home?region=eu-west-1#logs:
-**Role:** https://console.aws.amazon.com/iam/home?region=eu-west-1#/roles/ecsTaskExecutionRole
+A lot has been created for us:  
+**Task:** https://eu-west-1.console.aws.amazon.com/ecs/home?region=eu-west-1#/taskDefinitions/FargateMaarten  
+**Logging:** https://eu-west-1.console.aws.amazon.com/cloudwatch/home?region=eu-west-1#logs:  
+**Role:** https://console.aws.amazon.com/iam/home?region=eu-west-1#/roles/ecsTaskExecutionRole  

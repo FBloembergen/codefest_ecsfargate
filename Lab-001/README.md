@@ -38,12 +38,12 @@ This is to configure the container.
 The last thing we set are container environment settings:
 
 Search for Environment Variables and add the following 2 lines
-Key: path   value: /maarten/:name
-Key: port   value: 8080
+**Key:** path   **value:** /maarten/:name
+**Key:** port   **value:** 8080
 
 
 ## Additional information:
 A lot has been created for us:
-Task: https://eu-west-1.console.aws.amazon.com/ecs/home?region=eu-west-1#/taskDefinitions/FargateMaarten
-Logging: https://eu-west-1.console.aws.amazon.com/cloudwatch/home?region=eu-west-1#logs:
-Role: https://console.aws.amazon.com/iam/home?region=eu-west-1#/roles/ecsTaskExecutionRole
+**Task:** https://eu-west-1.console.aws.amazon.com/ecs/home?region=eu-west-1#/taskDefinitions/FargateMaarten
+**Logging:** https://eu-west-1.console.aws.amazon.com/cloudwatch/home?region=eu-west-1#logs:
+**Role:** https://console.aws.amazon.com/iam/home?region=eu-west-1#/roles/ecsTaskExecutionRole

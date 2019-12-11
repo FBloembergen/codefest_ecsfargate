@@ -26,8 +26,10 @@ And disable service discovery integration (Lab-003)
 
 ### Now test our service
 First check out our ip, we need this to test our application.  
-Press your *Cluster* --> *Service* --> *Your task*. This shows some details and Network settings.  
-![Image of Running Task](https://github.com/terra10/codefest_ecsfargate/tree/master/Lab-002/runningtask.png)  
+Press your *Cluster* --> *Service* --> *Your task*. This shows some details and Network settings:  
+
+Network details:
+![Image of Running Task](https://github.com/terra10/codefest_ecsfargate/tree/master/Lab-002/runningtask.png "test")
 
 
 ### Logging

@@ -3,23 +3,23 @@
 ## Lab 001 - The first Fargate Task
 
 ## ECR - Elastic Container Registry
-This is our repository for Docker Images. 
-You can find it under *ECS* --> *Amazon ECR* --> *Repositories*. Or type in ECR under Services. This directs you directly to the repository.
+This is our repository for Docker Images.  
+You can find it under *ECS* --> *Amazon ECR* --> *Repositories*. Or type in ECR under Services. This directs you directly to the repository.  
 
-Under Reposities you’ll find the repository helloflogo and when opening this you will only find 1 Image with tag: latest. For this course it is good enough to have only the latest tag. However I wouldn’t recommend to use latest. Except maybe for snapshots.
+Under Reposities you’ll find the repository helloflogo and when opening this you will only find 1 Image with tag: latest. For this course it is good enough to have only the latest tag. However I wouldn’t recommend to use latest. Except maybe for snapshots.  
 Also keep in mind at any time no tag is given when loading an image ECS will pick latest.
 
 
 ## Task Definitions
-With a task we define what we want to run and how to configure it.
-Go back to Amazon ECS  Task Definitions. Or type in ECS under Services.
+With a task we define what we want to run and how to configure it.  
+Go back to Amazon ECS  Task Definitions. Or type in ECS under Services.  
 
-We are now going to create a task Manually.
-Press Create new Task Definition
-Select Fargate as our target. And press Next Step
+We are now going to create a task Manually.  
+Press Create new Task Definition  
+Select Fargate as our target. And press Next Step  
 
-!! Do note in all cases where you see Maarten rename this to your own name!!
-It is just a name and not linked to your account.
+!! Do note in all cases where you see Maarten rename this to your own name!!  
+It is just a name and not linked to your account.  
 
 **Task Definition Name:** Fargate<user>  
 **Task Role:**  ecsTaskExecutionRole  

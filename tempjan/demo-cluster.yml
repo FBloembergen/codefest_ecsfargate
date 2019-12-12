@@ -1,0 +1,47 @@
+Description: Creates ECS Cluster
+
+Parameters:
+  ENV:
+    Description: 'Environment - dev/tst/acc/prd Default: tst'
+    AllowedValues:
+      - dev
+      - tst
+      - acc
+      - prd
+    Default: dev
+    Type: String  
+  opsNetworkStackName:
+    Type: String
+    Description: Name of ops-xxx-edge-network stack
+    Default: ops-tst-edge-network
+
+# Mappings: 
+#   Environments:
+#     dev:  
+#       HostedZone: dev.essent.nl.
+#     tst:  
+#       HostedZone: tst.essent.nl.
+#     acc:  
+#       HostedZone: acc.essent.nl.
+#     prd:  
+#       HostedZone: essent.nl.
+
+Resources:
+  # Fargate Cluster
+  Cluster:
+    Type: AWS::ECS::Cluster
+    Properties: 
+      ClusterName: !Sub "demo-${ENV}" 
+
+  ECSServiceDiscoveryNamespace:
+    Type: AWS::ServiceDiscovery::PrivateDnsNamespace
+    Properties:
+      Vpc: vpc-f5c0c793
+      Name: demo.local
+
+Outputs:
+  ECSServiceDiscoveryNamespace:
+    Description: A local namespace that will be used by all services in this cluster
+    Value: !Ref ECSServiceDiscoveryNamespace
+    Export:
+      Name: !Sub '${AWS::StackName}-ECSServiceDiscoveryNamespace'

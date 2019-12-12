@@ -1,0 +1,321 @@
+# aws cloudformation create-stack --stack-name demo-demo-network --template-body file://demo-demo-network.yml
+
+AWSTemplateFormatVersion: 2010-09-09
+Description: OPS demo VPC network stack
+Parameters:
+  ENV:
+    Description: 'Environment - dev/tst/acc/prd Default: tst'
+    AllowedValues:
+      - dev
+      - tst
+      - acc
+      - prd
+    Default: dev
+    Type: String
+  DefaultVpc:
+    Description: VPC ID
+    Type: String
+    Default: vpc-f5c0c793
+  DefaultIGW:
+    Description: Existing IGW
+    Type: String
+    Default: igw-52291935  
+
+Mappings: 
+  Environments:
+    dev:  
+      DemoSubnetCidrBlock1: 172.31.1.0/24
+      DemoSubnetCidrBlock2: 172.31.2.0/24
+      DemoSubnetCidrBlock3: 172.31.3.0/24
+
+Resources:
+  ######################
+  ## Subnets
+  ######################
+  DemoSubnet1:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref DefaultVpc
+      AvailabilityZone: !Select 
+        - 0
+        - Fn::GetAZs: !Ref 'AWS::Region'
+      CidrBlock: !FindInMap [Environments, !Ref ENV, DemoSubnetCidrBlock1]
+      MapPublicIpOnLaunch: false
+      Tags:
+        - Key: Name
+          Value: !Join [ "-", [ "demo", !Ref ENV, "1a"]]
+  DemoSubnet2:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref DefaultVpc
+      AvailabilityZone: !Select 
+        - 1
+        - Fn::GetAZs: !Ref 'AWS::Region'
+      CidrBlock: !FindInMap [Environments, !Ref ENV, DemoSubnetCidrBlock2]
+      MapPublicIpOnLaunch: false
+      Tags:
+        - Key: Name
+          Value: !Join [ "-", [ "demo", !Ref ENV, "1b"]]
+  DemoSubnet3:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref DefaultVpc
+      AvailabilityZone: !Select 
+        - 2
+        - Fn::GetAZs: !Ref 'AWS::Region'
+      CidrBlock: !FindInMap [Environments, !Ref ENV, DemoSubnetCidrBlock3]
+      MapPublicIpOnLaunch: false
+      Tags:
+        - Key: Name
+          Value: !Join [ "-", [ "demo", !Ref ENV, "1c"]]         
+  ######################
+  ## Route Tables
+  ######################
+  DemoRouteTable:
+      Type: AWS::EC2::RouteTable
+      Properties:
+          VpcId: !Ref DefaultVpc
+          Tags:
+              - Key: Name
+                Value: !Join [ "-", [ "demo-rt", !Ref ENV]]    
+  DemoRouteTableRoute1:
+      Type: AWS::EC2::Route
+      Properties:
+          RouteTableId: !Ref DemoRouteTable
+          DestinationCidrBlock: 0.0.0.0/0
+          GatewayId: !Ref DefaultIGW
+  DemoRouteTableAssociation1:
+      Type: AWS::EC2::SubnetRouteTableAssociation
+      Properties:
+        SubnetId: !Ref DemoSubnet1
+        RouteTableId: !Ref DemoRouteTable
+  DemoRouteTableAssociation2:
+      Type: AWS::EC2::SubnetRouteTableAssociation
+      Properties:
+        SubnetId: !Ref DemoSubnet2
+        RouteTableId: !Ref DemoRouteTable
+  DemoRouteTableAssociation3:
+      Type: AWS::EC2::SubnetRouteTableAssociation
+      Properties:
+        SubnetId: !Ref DemoSubnet3
+        RouteTableId: !Ref DemoRouteTable
+  # ######################
+  # NACL Security (Firewall)
+  # rules ingess:
+  #   10  =   Internal VPC traffic everything 
+  #   443  =  Internet traffic on 443 
+  # rules egress:
+  #   1    =   Outbound everything 
+  # ######################
+  DemoNetworkAcl:
+    Type: AWS::EC2::NetworkAcl
+    Properties:
+        VpcId: !Ref DefaultVpc
+        Tags:
+            - Key: Name
+              Value: !Join [ "-", [ "demo-nacl", !Ref ENV]]   
+  DemoNetworkAclEntryInbound11:
+    Type: AWS::EC2::NetworkAclEntry
+    Properties:
+        CidrBlock: !FindInMap [Environments, !Ref ENV, DemoSubnetCidrBlock1]
+        Egress: 'false'
+        NetworkAclId: !Ref DemoNetworkAcl
+        PortRange:
+          From: '0'
+          To: '65535'
+        Protocol: -1
+        RuleAction: allow
+        RuleNumber: 11
+  DemoNetworkAclEntryInbound12:
+    Type: AWS::EC2::NetworkAclEntry
+    Properties:
+        CidrBlock: !FindInMap [Environments, !Ref ENV, DemoSubnetCidrBlock2]
+        Egress: 'false'
+        NetworkAclId: !Ref DemoNetworkAcl
+        PortRange:
+          From: '0'
+          To: '65535'
+        Protocol: -1
+        RuleAction: allow
+        RuleNumber: 12
+  DemoNetworkAclEntryInbound13:
+    Type: AWS::EC2::NetworkAclEntry
+    Properties:
+        CidrBlock: !FindInMap [Environments, !Ref ENV, DemoSubnetCidrBlock3]
+        Egress: 'false'
+        NetworkAclId: !Ref DemoNetworkAcl
+        PortRange:
+          From: '0'
+          To: '65535'
+        Protocol: -1
+        RuleAction: allow
+        RuleNumber: 13                
+  DemoNetworkAclEntryInbound443:
+    Type: AWS::EC2::NetworkAclEntry
+    Properties:
+        CidrBlock: 0.0.0.0/0
+        Egress: 'false'
+        NetworkAclId: !Ref DemoNetworkAcl
+        PortRange:
+          From: '0'
+          To: '65535'
+        Protocol: -1
+        RuleAction: allow
+        RuleNumber: 100
+  DemoNetworkAclEntryInbound1025: # ephemeral ports
+    Type: AWS::EC2::NetworkAclEntry
+    Properties:
+        CidrBlock: 0.0.0.0/0
+        Egress: 'false'
+        NetworkAclId: !Ref DemoNetworkAcl
+        PortRange:
+          From: '1025'
+          To: '61000'
+        Protocol: 6
+        RuleAction: allow
+        RuleNumber: 1025
+  DemoNetworkAclEntryOutbound1:
+    Type: AWS::EC2::NetworkAclEntry
+    Properties:
+        CidrBlock: 0.0.0.0/0
+        Egress: 'true'
+        NetworkAclId: !Ref DemoNetworkAcl
+        PortRange:
+          From: '0'
+          To: '65535'
+        Protocol: -1
+        RuleAction: allow
+        RuleNumber: 1          
+  DemoSubnetNetworkAclAssociation1:
+      Type: AWS::EC2::SubnetNetworkAclAssociation
+      Properties:
+          SubnetId: !Ref DemoSubnet1
+          NetworkAclId: !Ref DemoNetworkAcl
+  DemoSubnetNetworkAclAssociation2:
+      Type: AWS::EC2::SubnetNetworkAclAssociation
+      Properties:
+          SubnetId: !Ref DemoSubnet2
+          NetworkAclId: !Ref DemoNetworkAcl
+  DemoSubnetNetworkAclAssociation3:
+      Type: AWS::EC2::SubnetNetworkAclAssociation
+      Properties:
+          SubnetId: !Ref DemoSubnet3
+          NetworkAclId: !Ref DemoNetworkAcl
+  
+  SecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: !Sub 'demo-${ENV}'
+      GroupName: !Sub 'demo-${ENV}'
+      VpcId: !Ref DefaultVpc
+      SecurityGroupIngress:
+        - IpProtocol: -1
+          CidrIp: 0.0.0.0/0                             
+      SecurityGroupEgress:
+        - IpProtocol: -1
+          CidrIp: 0.0.0.0/0
+      Tags:
+        - Key: Name
+          Value: !Sub 'demo-${ENV}'
+
+
+  ######################
+  ## Generic Loadbalancers
+  ######################
+  # LoadBalancerSecurityGroup:
+  #   Type: AWS::EC2::SecurityGroup
+  #   Properties:
+  #     GroupDescription: !Sub 't10-${ENV}-demo-sg-alb-https-secure' 
+  #     GroupName: !Sub 't10-${ENV}-demo-sg-alb-httpssecure' 
+  #     VpcId: !Ref DefaultVpc
+  #     SecurityGroupIngress:
+  #       - IpProtocol: tcp
+  #         FromPort: 443
+  #         ToPort: 443
+  #         CidrIp: 0.0.0.0/0
+  #     Tags:
+  #       - Key: Name
+  #         Value: !Sub 't10-${ENV}-demo-sg-alb-httpssecure'
+  #       - Key: StackName
+  #         Value: !Sub ${AWS::StackName}
+  #       - Key: CMDB_APP_name
+  #         Value: NL_IDP          
+  # LoadBalancerdemoAlbSecure:
+  #   Type: AWS::ElasticLoadBalancingV2::LoadBalancer
+  #   Properties:
+  #     LoadBalancerAttributes:
+  #       # this is the default, but is specified here in case it needs to be changed
+  #       - Key: idle_timeout.timeout_seconds
+  #         Value: 60
+  #     Name: !Sub 't10-${ENV}-a-demo-httpssecure' 
+  #     Scheme: internet-facing # "internal" or "internet-facing"
+  #     SecurityGroups:
+  #       - !Ref LoadBalancerSecurityGroup
+  #     Subnets:
+  #       - !Ref DemoSubnet1
+  #       - !Ref DemoSubnet2   
+  #       - !Ref DemoSubnet3
+  #     Tags:
+  #       - Key: StackName
+  #         Value: !Sub ${AWS::StackName}
+  #       - Key: CMDB_APP_name
+  #         Value: NL_IDP
+  # # LoadBalancerHttpslistener:
+  # #   Type: AWS::ElasticLoadBalancingV2::Listener
+  # #   Properties:
+  # #     Certificates:
+  # #       - CertificateArn: "arn:aws:acm:eu-central-1:829552880873:certificate/13131bb7-0b03-49bf-897e-e6948248e1bb"
+  # #     DefaultActions:
+  # #       - Type: "fixed-response"
+  # #         FixedResponseConfig:
+  # #           StatusCode: 400
+  # #           ContentType: "text/plain"
+  # #           MessageBody: "Invalid ElasticLoadBalancing Listener configuration"            
+  # #     LoadBalancerArn: !Ref LoadBalancerdemoAlbSecure
+  # #     Port: 443
+  # #     Protocol: HTTPS            
+  
+Outputs:
+  OutputVpcId:
+    Description: 'Demo VPC ID'
+    Value: !Ref DefaultVpc
+    Export:
+      Name: !Sub '${AWS::StackName}-vpcid'  
+  OutputDemoSubnet1:
+    Description: 'Demo Subnet1 Id'
+    Value: !Ref DemoSubnet1
+    Export:
+      Name: !Sub '${AWS::StackName}-subnet-1a'
+  OutputDemoSubnet2:
+    Description: 'Demo Subnet2 Id'
+    Value: !Ref DemoSubnet2
+    Export:
+      Name: !Sub '${AWS::StackName}-subnet-1b'   
+  OutputDemoSubnet3:
+    Description: 'Demo Subnet3 Id'
+    Value: !Ref DemoSubnet3
+    Export:
+      Name: !Sub '${AWS::StackName}-subnet-1c' 
+  outputSecuritygroup:
+    Description: Lambda Security Group
+    Value: !Ref SecurityGroup
+    Export:
+      Name: !Sub '${AWS::StackName}-securitygroup'       
+
+  # OutputLoadBalancerHttpslistener:
+  #   Description: 'application loadbalancer for HTTPS traffic listener'
+  #   Value: !Ref LoadBalancerHttpslistener
+  #   Export:
+  #     Name: !Sub '${AWS::StackName}-a-demo-https-listener'
+  # OutputLoadBalancerHttpsDNS:
+  #   Description: 'application loadbalancer for HTTPS traffic dns'
+  #   Value: 
+  #     Fn::GetAtt: [ LoadBalancerdemoAlbSecure, DNSName ]
+  #   Export:
+  #     Name: !Sub '${AWS::StackName}-a-demo-https-dns'      
+  # OutputLoadBalancerHttpsZone:
+  #   Description: 'application loadbalancer for HTTPS traffic hostedZoneId'
+  #   Value: 
+  #     Fn::GetAtt: [ LoadBalancerdemoAlbSecure, CanonicalHostedZoneID ]
+  #   Export:
+  #     Name: !Sub '${AWS::StackName}-a-demo-https-hostedzone'          

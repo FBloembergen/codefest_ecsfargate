@@ -1,0 +1,228 @@
+---
+Parameters:
+  ENV:
+    Description: 'Environment'
+    Default: dev
+    Type: String  
+
+Resources:
+  
+  ### colorgateway.default.svc.cluster.local
+  ColorGatewayServiceDiscoveryRecord:
+    Type: 'AWS::ServiceDiscovery::Service'
+    Properties:
+      Name: "colorgateway"
+      DnsConfig:
+        NamespaceId: 
+          'Fn::ImportValue': demo-cluster-ECSServiceDiscoveryNamespace
+        DnsRecords:
+          - Type: A
+            TTL: 300
+      HealthCheckCustomConfig:
+        FailureThreshold: 1
+
+  ### colorgateway.default.svc.cluster.local
+  # ColorTellerServiceDiscoveryRecord:
+  #   Type: 'AWS::ServiceDiscovery::Service'
+  #   Properties:
+  #     Name: "colorteller"
+  #     DnsConfig:
+  #       NamespaceId: 
+  #         'Fn::ImportValue': demo-cluster-ECSServiceDiscoveryNamespace
+  #       DnsRecords:
+  #         - Type: A
+  #           TTL: 300
+  #     HealthCheckCustomConfig:
+  #       FailureThreshold: 1
+
+  ColorGatewayService:
+    Type: AWS::ECS::Service
+    DependsOn:
+      - WebLoadBalancerRule
+    Properties:
+      Cluster: terra10-dev
+      DeploymentConfiguration:
+        MaximumPercent: 200
+        MinimumHealthyPercent: 100
+      DesiredCount: 1
+      LaunchType: FARGATE
+      ServiceRegistries:
+        - RegistryArn:
+            'Fn::GetAtt': ColorGatewayServiceDiscoveryRecord.Arn
+      NetworkConfiguration:
+        AwsvpcConfiguration:
+          AssignPublicIp: ENABLED
+          SecurityGroups:
+            - 'Fn::ImportValue': demo-edge-network-securitygroup
+          Subnets: 
+            - 'Fn::ImportValue': demo-edge-network-subnet-1a
+      # TaskDefinition: !Ref GatewayTaskDefinition
+      TaskDefinition: DEMO-ColorGateway
+      LoadBalancers:
+        - ContainerName: app
+          ContainerPort: 9080
+          TargetGroupArn: !Ref WebTargetGroup
+  
+  # Logging
+  LogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub '/codefest/gateway'
+      RetentionInDays: 1
+
+  GatewayTaskDefinition:
+    DependsOn: LogGroup
+    Type: 'AWS::ECS::TaskDefinition'
+    Properties:
+      RequiresCompatibilities:
+        - FARGATE
+      Cpu: 1024
+      Memory: 2048
+      ContainerDefinitions:
+        - Name: "app"
+          Image: 779717477382.dkr.ecr.eu-west-1.amazonaws.com/gateway
+          Essential: true
+          LogConfiguration:
+            LogDriver: "awslogs"
+            Options:
+              awslogs-group: /codefest/gateway
+              awslogs-region: { Ref: "AWS::Region" }
+              awslogs-stream-prefix: "colorgateway-app"
+          PortMappings:
+            - ContainerPort: 9080
+              HostPort: 9080
+              Protocol: "tcp"
+          Environment:
+            - Name: COLOR_TELLER_ENDPOINT
+              Value: colorteller.terra10.local:9080
+            - Name: SERVER_PORT
+              Value: 9080
+            - Name: STAGE
+              Value: ""
+            - Name: TCP_ECHO_ENDPOINT
+              Value: tcpecho.terra10.local:2701
+        - Name: "envoy"
+          Image: 840364872350.dkr.ecr.eu-west-1.amazonaws.com/aws-appmesh-envoy:v1.12.1.1-prod
+          User: 1337
+          Essential: true
+          LogConfiguration:
+            LogDriver: "awslogs"
+            Options:
+              awslogs-group: /codefest/gateway
+              awslogs-region: { Ref: "AWS::Region" }
+              awslogs-stream-prefix: "colorgateway-envoy"
+          Ulimits:
+            - Name: nofile
+              SoftLimit: 15000
+              HardLimit: 15000
+          PortMappings:
+            - ContainerPort: 9901
+              HostPort: 9901
+              Protocol: "tcp"
+            - ContainerPort: 15000
+              HostPort: 15000
+              Protocol: "tcp"
+            - ContainerPort: 15001
+              HostPort: 15001
+              Protocol: "tcp"
+          Environment:
+            - Name: APPMESH_VIRTUAL_NODE_NAME
+              Value: mesh/terra10-mesh/virtualNode/colorgateway-vn
+            - Name: APPMESH_XDS_ENDPOINT
+              Value: ""
+            - Name: ENABLE_ENVOY_STATS_TAGS
+              Value: 1
+            - Name: ENABLE_ENVOY_XRAY_TRACING
+              Value: 1
+            - Name: ENVOY_LOG_LEVEL
+              Value: debug
+        - Name: "xray-daemon"
+          Image: amazon/aws-xray-daemon
+          User: 1337
+          Essential: true
+          LogConfiguration:
+            LogDriver: "awslogs"
+            Options:
+              awslogs-group: /codefest/gateway
+              awslogs-region: { Ref: "AWS::Region" }
+              awslogs-stream-prefix: "colorgateway-xray"
+          PortMappings:
+            - ContainerPort: 2000
+              HostPort: 2000
+              Protocol: udp
+      # ProxyConfiguration:
+      #   ContainerName: envoy
+      #   Type: APPMESH
+      #   ProxyConfigurationProperties: 
+      #     - Name: ProxyIngressPort
+      #       Value: 15000
+      #     - Name: AppPorts
+      #       Value: 9080
+      #     - Name: EgressIgnoredIPs
+      #       Value: "169.254.170.2,169.254.169.254"
+      #     - Name: IgnoredUID
+      #       Value: 1337
+      #     - Name: ProxyEgressPort
+      #       Value: 15001   
+      ExecutionRoleArn: DEMO-ecs-cluster-TaskExecutionIamRole-13Z4K0V5LRJPH 
+      TaskRoleArn: DEMO-ecs-cluster-TaskIamRole-1274J6DI6B9P0
+      NetworkMode: "awsvpc"
+
+  #Loadbalancer for color gateway
+  PublicLoadBalancer:
+    Type: AWS::ElasticLoadBalancingV2::LoadBalancer
+    Properties:
+      Scheme: internet-facing
+      Name: !Sub 'terra10-${ENV}-alb' 
+      LoadBalancerAttributes:
+        - Key: idle_timeout.timeout_seconds
+          Value: '30'
+      Subnets:
+        - 'Fn::ImportValue': demo-edge-network-subnet-1a
+        - 'Fn::ImportValue': demo-edge-network-subnet-1b  
+      SecurityGroups:
+        - 'Fn::ImportValue': demo-edge-network-securitygroup
+
+  WebTargetGroup:
+    Type: AWS::ElasticLoadBalancingV2::TargetGroup
+    Properties:
+      HealthCheckIntervalSeconds: 6
+      HealthCheckPath: /ping
+      HealthCheckProtocol: HTTP
+      HealthCheckTimeoutSeconds: 5
+      HealthyThresholdCount: 2
+      TargetType: ip
+      Name: !Sub "${ENV}-web"
+      Port: 80
+      Protocol: HTTP
+      UnhealthyThresholdCount: 2
+      TargetGroupAttributes:
+        - Key: deregistration_delay.timeout_seconds
+          Value: 120
+      VpcId: 
+        'Fn::ImportValue': demo-edge-network-vpcid
+  
+  PublicLoadBalancerListener:
+    Type: AWS::ElasticLoadBalancingV2::Listener
+    DependsOn:
+      - PublicLoadBalancer
+    Properties:
+      DefaultActions:
+        - TargetGroupArn: !Ref WebTargetGroup
+          Type: 'forward'
+      LoadBalancerArn: !Ref 'PublicLoadBalancer'
+      Port: 80
+      Protocol: HTTP
+
+  WebLoadBalancerRule:
+    Type: AWS::ElasticLoadBalancingV2::ListenerRule
+    Properties:
+      Actions:
+        - TargetGroupArn: !Ref WebTargetGroup
+          Type: 'forward'
+      Conditions:
+        - Field: path-pattern
+          Values: 
+            - "*"
+      ListenerArn: !Ref PublicLoadBalancerListener
+      Priority: 1

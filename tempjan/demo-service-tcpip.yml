@@ -1,0 +1,86 @@
+---
+Parameters:
+  ENV:
+    Description: 'Environment'
+    Default: dev
+    Type: String  
+  AppMeshMeshName:
+    Description: 'Environment'
+    Default: terra10-mesh
+    Type: String
+
+Resources:
+
+  TcpEchoServiceDiscoveryRecord:
+    Type: 'AWS::ServiceDiscovery::Service'
+    Properties:
+      Name: "tcpecho"
+      DnsConfig:
+        NamespaceId: 
+          'Fn::ImportValue': demo-cluster-ECSServiceDiscoveryNamespace
+        DnsRecords:
+          - Type: A
+            TTL: 300
+      HealthCheckCustomConfig:
+        FailureThreshold: 1
+
+  TcpEchoService:
+    Type: 'AWS::ECS::Service'
+    Properties:
+      Cluster: terra10-dev
+      DeploymentConfiguration:
+        MaximumPercent: 200
+        MinimumHealthyPercent: 100
+      DesiredCount: 1
+      LaunchType: FARGATE
+      ServiceRegistries:
+        - RegistryArn:
+            'Fn::GetAtt': TcpEchoServiceDiscoveryRecord.Arn
+      NetworkConfiguration:
+        AwsvpcConfiguration:
+          AssignPublicIp: ENABLED
+          SecurityGroups:
+            - 'Fn::ImportValue': demo-edge-network-securitygroup
+          Subnets: 
+            - 'Fn::ImportValue': demo-edge-network-subnet-1a
+            - 'Fn::ImportValue': demo-edge-network-subnet-1b
+      # TaskDefinition: DEMO-ecs-colorapp-TcpEchoTaskDefinition-2TYXIW8MT2SK
+      TaskDefinition: { Ref: TcpEchoTaskDefinition }
+
+  # Logging
+  LogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub '/codefest/tcpip'
+      RetentionInDays: 1
+
+  TcpEchoTaskDefinition:
+    DependsOn: LogGroup
+    Type: 'AWS::ECS::TaskDefinition'
+    Properties:
+      RequiresCompatibilities:
+        - FARGATE
+      Cpu: 1024
+      Memory: 2048
+      ContainerDefinitions:
+        - Name: "app"
+          Image: "cjimti/go-echo"
+          Essential: true
+          LogConfiguration:
+            LogDriver: "awslogs"
+            Options:
+              awslogs-group: /codefest/tcpip
+              awslogs-region: { Ref: "AWS::Region" }
+              awslogs-stream-prefix: "tcpecho-app"
+          PortMappings:
+            - ContainerPort: 2701
+              HostPort: 2701
+              Protocol: "tcp"
+          Environment:
+            - Name: "TCP_PORT"
+              Value: "2701"
+            - Name: "NODE_NAME"
+              Value: !Sub "mesh/${AppMeshMeshName}/virtualNode/tcpecho-vn"
+      ExecutionRoleArn: DEMO-ecs-cluster-TaskExecutionIamRole-13Z4K0V5LRJPH 
+      TaskRoleArn: DEMO-ecs-cluster-TaskIamRole-1274J6DI6B9P0
+      NetworkMode: "awsvpc"

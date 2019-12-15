@@ -1,49 +1,39 @@
 # TERRA 10 Fargate Labs
 
-## Lab 001 - The first Fargate Task
+2do: uitleggen hoe het netwerk gedeelte eruit ziet OF we laten ze een eigen VPC aanmaken met subnets. Of we hebben al een Default VPC met IG en RT en laten alleen iedereen 2 x subnet aanmaken.
 
-## ECR - Elastic Container Registry
-This is our repository for Docker Images.  
-You can find it under *ECS* --> *Amazon ECR* --> *Repositories*. Or type in ECR under Services. This directs you directly to the repository.  
+## Lab 001 -Network
 
-Under Reposities you’ll find the repository helloflogo and when opening this you will only find 1 Image with tag: latest. For this course it is good enough to have only the latest tag. However I wouldn’t recommend to use latest. Except maybe for snapshots.  
-Also keep in mind at any time no tag is given when loading an image ECS will pick latest.
+Navigate to AWS VPC and make sure to be in the “ireland” region. That’s where the party is.
 
+https://eu-west-1.console.aws.amazon.com/vpc/home?region=eu-west-1#dashboard:
 
-## Task Definitions
-With a task we define what we want to run and how to configure it.  
-Go back to Amazon *ECS* --> *Task Definitions*. Or type in ECS under Services.  
+As this training is Fargate we are going to setup a Networking only cluster.
+For now we are going to create a new VPC.
 
-We are now going to create a task Manually.  
-Press *Create new Task Definition*  
-Select *Fargate* as our target. And press *Next Step*  
+Select: Create a new VPC for this cluster
+``` 
+10.0.0.0/16
+10.0.0.0/24
+10.0.1.0/24
+```
+For this course 2 subnets are enough.
+Press Create
 
-!! Do note in all cases where you see Maarten rename this to your own name!!  
-It is just a name and not linked to your account.  
+These subnets have 254 ip addresses available each which should be more than enough.
+Go to CloudFormation to see what is happening!
 
-**Task Definition Name:** Fargate<user>  
-**Task Role:**  ecsTaskExecutionRole  
-**Task execution role:**  ecsTaskExecutionRole  
+Results:
+ * VPCvpc-0adc34d6cb40367d7
+ * Subnet 1subnet-096398da96466d1e1
+ * Subnet 1 route table associationrtbassoc-09f34f64991059514
+ * Subnet 2subnet-0c9416d4928830762
+ * Subnet 2 route table associationrtbassoc-01891338d8b21c657
+ * VPC Availability Zoneseu-west-1a, eu-west-1b, eu-west-1c
+ * Internet gatewayigw-052800124935b19b3
+ * Route tablertb-0c17747f71a6bc36c
+ * Amazon EC2 routeEC2Co-Publi-1C1NSNJXHSV9Y
+ * Virtual private gateway attachmentEC2Co-Attac-178W8U5Q798TK
 
-**Task memory:** 0.5  
-**Task CPU:** 0.25  
+This also shows what has to be created to make all of this work.
 
-Then we will find a blue button:  “Add container”.  
-This is to configure the container.  
-
-**ContainerName:** <user>  
-**Image:**  779717477382.dkr.ecr.eu-west-1.amazonaws.com/helloflogo  
-**PortMapping – ContainerPort:** 8080  
-
-The last thing we set are container environment settings:
-
-Search for Environment Variables and add the following 2 lines  
-**Key:** path   **value:** /maarten/:name  
-**Key:** port   **value:** 8080  
-
-
-## Additional information:
-A lot has been created for us:  
-**Task:** https://eu-west-1.console.aws.amazon.com/ecs/home?region=eu-west-1#/taskDefinitions/FargateMaarten  
-**Logging:** https://eu-west-1.console.aws.amazon.com/cloudwatch/home?region=eu-west-1#logs:  
-**Role:** https://console.aws.amazon.com/iam/home?region=eu-west-1#/roles/ecsTaskExecutionRole  

@@ -38,7 +38,7 @@ Resources:
           SecurityGroups:
             - 'Fn::ImportValue': demo-edge-network-securitygroup
           Subnets: 
-            - 'Fn::ImportValue': demo-edge-network-subnet-1a
+            - 'Fn::ImportValue': demo-edge-network-subnet-1b
       # TaskDefinition: !Ref ColorTaskDefinition
       TaskDefinition: DEMO-ColorTeller-white
 

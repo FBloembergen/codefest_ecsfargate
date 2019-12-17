@@ -29,3 +29,5 @@ The container is pulled from docker hub so that is the reason the service runs i
 
 It is also possible to use the internal AWS ECS repository or a private repository which requires credentials (like Artifactory or ...)
 
+## Summary
+Without any servers or EC2 infrastructure you are able to run your (Docker) container in AWS. Also allowing enhanced features like loadbalancing, auto-scaling and self-healing.

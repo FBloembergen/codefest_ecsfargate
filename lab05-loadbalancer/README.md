@@ -34,5 +34,3 @@ Use the same settings for the Nginx container but this time enable the loadbalan
 ![alt text](https://github.com/terra10/codefest_ecsfargate/raw/master/lab05-loadbalancer/lab05-container2alb.png "ALB 2")
 
 ## Additional information
-xxxx
-

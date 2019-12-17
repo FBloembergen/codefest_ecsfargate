@@ -17,5 +17,5 @@ Prep:
 - iam users + dns + vpc
 
 ## Index of labs
-* [Lab00-preperation](Lab00 - preperation)
-* [Lab01-network](Lab01 - network)
+* [lab00-preperation](lab00-preperation)
+* [lab01-network](lab01-network)

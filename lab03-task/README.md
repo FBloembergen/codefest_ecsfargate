@@ -21,8 +21,8 @@ Select *Fargate* as our target. And press *Next Step*
 !! Do note in all cases where you see Maarten rename this to your own name!!  
 It is just a name and not linked to your account.  
 
-- Task Definition Name: nginx-XXXXX
-     *where XXXXX is your name or something unique it is shared between the Clusters*
+- Task Definition Name: nginx-XXXXX  
+     *where XXXXX is your name or something unique it is shared between the Clusters*  
 - Task Role:  ecsTaskExecutionRole  
 - Task execution role:  ecsTaskExecutionRole  
 - Task memory: 0.5  
@@ -34,7 +34,7 @@ This is to configure the container.
 * ContainerName: nginx-xxx
 * Image: nginx:latest
 * PortMapping
-** ContainerPort: 8080  
+** ContainerPort: 80  
 
 
 ## Additional information:

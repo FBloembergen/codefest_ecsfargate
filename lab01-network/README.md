@@ -1,4 +1,6 @@
 # TERRA 10 Fargate Labs (Theory)
+ONLY Do this lab if you are doing this outside this training!  
+Otherwise just read this for your knowledge.
 
 ## What is Amazon VPC? (Virtual Private Cloud)
 
@@ -8,10 +10,10 @@ Amazon VPC lets you provision a logically isolated section of the Amazon Web Ser
 
 As this training is about Fargate and not setting up a network we have created this already.
 
-DEMO Private Subnet (AZ1)     10.0.64.0/19
-DEMO Private Subnet (AZ2)     10.0.96.0/19
-DEMO Public Subnet (AZ1)      10.0.0.0/19
-DEMO Public Subnet (AZ2)      10.0.32.0/19
+DEMO Private Subnet (AZ1)     10.0.64.0/19  
+DEMO Private Subnet (AZ2)     10.0.96.0/19  
+DEMO Public Subnet (AZ1)      10.0.0.0/19  
+DEMO Public Subnet (AZ2)      10.0.32.0/19  
 
 Each have more than enough available IP adresses.
 

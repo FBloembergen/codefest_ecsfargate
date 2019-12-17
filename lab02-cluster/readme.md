@@ -16,7 +16,7 @@ https://eu-west-1.console.aws.amazon.com/ecs/home?region=eu-west-1#/getStarted
 The cluster should be provisioned within minutes if not seconds.
 
 
-## Additional informastion:
+## Additional information:
 An AWS ECS Fargate cluster is an empty box. You can use it to group services with their tasks, but it has no other use at all. The network and runtime logic is all determined on task and service level. Two services running in cluster A could therefor not communicate with eachother if network wise this would not be configured, like a service in cluster A and one in cluster B could if they run in the same network subnet.
 
 One AWS ECS cluster can host both ECS (IAAS) and ECS Fargate (serverless) tasks combined. EKS (Kubernetes) however has it's own cluster.

@@ -32,7 +32,7 @@ Go to App Mesh: https://eu-west-1.console.aws.amazon.com/appmesh/meshes?region=e
 ### Summary App Mesh
 The App Mesh is basically a configurable, low‑latency infrastructure layer designed to handle a high volume of network‑based interprocess communication among application infrastructure services using application programming interfaces (APIs). The service, nodes and routes are the basic network components necessary for this communication.
 
-### X-Ray
+### Inspect X-Ray
 Go to the X-Ray service map: https://eu-west-1.console.aws.amazon.com/xray/home?region=eu-west-1#/service-map
 
 ### Summary App Mesh

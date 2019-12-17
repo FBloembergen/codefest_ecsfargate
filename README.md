@@ -15,3 +15,13 @@ Codefest for ECS Fargate
 
 Prep:
 - iam users + dns + vpc
+
+## Index of labs
+* [Lab00](Lab000) - TEST
+* [Lab01](Lab001) - TEST
+* [Lab02](Lab002) - The first build & deploy
+* [Lab03](Lab003) - The first real Lambda Service
+* [Lab04](Lab004) - I got the key, I got the secret
+* [Lab05](Lab005) - So many models
+* [Lab06](Lab006) - Get all beers
+* [Lab07](Lab007) - Get just 1 beer (why?)

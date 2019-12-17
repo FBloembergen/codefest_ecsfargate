@@ -29,7 +29,7 @@ We created an application load balancer that forwards HTTP (port 80) traffic to 
 
 
 ### Use the loadbalancer with your Fargate service
-Go to ECS and create a new Task definition, name it nginx-alb-someUniqueName
+Go to ECS and create a new Service definition, name it nginx-alb-someUniqueName
 Use the same settings for the Nginx container but this time enable the loadbalancer option:
 
 ![alt text](https://github.com/terra10/codefest_ecsfargate/raw/master/lab05-loadbalancer/lab05-alb.png "ALB")

@@ -2,7 +2,10 @@
 
 ## Lab 05 - Loadbalancer
 
-### Create the application loadbalancer
+### Create the application loadbalancer (Theory)
+As with the Internet Gateway there is a max of 5 loadbalancers unless upgraded using a service call.
+For this training we already created one. You can create one using the following instructions.
+
 Go to EC2 and create an ALB
 https://eu-west-1.console.aws.amazon.com/ec2/v2/home?region=eu-west-1#LoadBalancers:
 
@@ -11,7 +14,7 @@ https://eu-west-1.console.aws.amazon.com/ec2/v2/home?region=eu-west-1#LoadBalanc
 - Select an unique name
 - Choose internet facing
 Next
-- Select the default VPC and it's 3 subnets
+- Select the default VPC and the public subnets.
 Next, Configure Security
 - Select the default security group
 Next, Configure Routing
@@ -22,7 +25,7 @@ Next, Review
 Create
 
 Summary:
-We createn an application load balancer that forwards HTTP (port 80) traffic to a new target group. Normally you can configure target groups to point to 1-n servers to load balancer their load. In this case we let the container register itself dynamically.
+We created an application load balancer that forwards HTTP (port 80) traffic to a new target group. Normally you can configure target groups to point to 1-n servers to load balancer their load. In this case we let the container register itself dynamically.
 
 
 ### Use the loadbalancer with your Fargate service

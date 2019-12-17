@@ -6,17 +6,19 @@ Select your cluster and create new service
 - Launch type: Fargate
 - Task definition: <your just created task here>
 - Revision: probably 1
-- Service name: nginx-XXX
+- Service name: **nginx-XXX***
+	*where XXX is your name*
 - Number of tasks: 1
 Next Step
-- Select VPC
-- Select subnets
+- Select VPC:   ** vpc-0231210a6048235b6 **
+- Select subnets  **subnet-0a47a39f97fde2396 and subnet-0d5f5bddb693879fd**
+     *note that we use the public subnets, otherwise we cannot reach them*
 - Auto-assign public IP: ENABLED
 - Loadbalancer: none
 Next step
 Create service
 
-Wait until the service is running, then copy the public IP and pase it in your browser.
+Wait until the service is running, then copy the public IP and paste it in your browser.
 
 Result: 
 ![alt text](https://github.com/terra10/codefest_ecsfargate/raw/master/lab04-service/lab04-nginx.png "Nginx")

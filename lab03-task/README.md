@@ -2,7 +2,7 @@
 
 ## Lab 03 - The first Fargate Task
 
-## ECR - Elastic Container Registry
+## ECR - Elastic Container Registry (Theory)
 This is our repository for Docker Images.  
 You can find it under *ECS* --> *Amazon ECR* --> *Repositories*. Or type in ECR under Services. This directs you directly to the repository.  
 
@@ -22,6 +22,7 @@ Select *Fargate* as our target. And press *Next Step*
 It is just a name and not linked to your account.  
 
 - Task Definition Name: nginx-XXXXX
+     *where XXXXX is your name or something unique it is shared between the Clusters*
 - Task Role:  ecsTaskExecutionRole  
 - Task execution role:  ecsTaskExecutionRole  
 - Task memory: 0.5  
@@ -34,12 +35,6 @@ This is to configure the container.
 * Image: nginx:latest
 * PortMapping
 ** ContainerPort: 8080  
-
-The last thing we set are container environment settings:
-
-Search for Environment Variables and add the following 2 lines  
-**Key:** path   **value:** /maarten/:name  
-**Key:** port   **value:** 8080  
 
 
 ## Additional information:

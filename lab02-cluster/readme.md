@@ -11,7 +11,7 @@ https://eu-west-1.console.aws.amazon.com/ecs/home?region=eu-west-1#/getStarted
 - Create a new cluster
 - Networking Only (Fargate) because the other options are for physical servers and we dont need EC2 instances at all
 - Name your cluster with an unique id, like your own name
-- Make sure to enable Cloudwatch Insights for detailed logging
+- Make sure to disable Cloudwatch Insights for detailed we are not using this
 
 The cluster should be provisioned within minutes if not seconds.
 

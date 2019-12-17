@@ -2,6 +2,7 @@
 
 ## Lab 05 - Loadbalancer
 
+### Create the application loadbalancer
 Go to EC2 and create an ALB
 https://eu-west-1.console.aws.amazon.com/ec2/v2/home?region=eu-west-1#LoadBalancers:
 
@@ -23,7 +24,10 @@ Create
 Summary:
 We createn an application load balancer that forwards HTTP (port 80) traffic to a new target group. Normally you can configure target groups to point to 1-n servers to load balancer their load. In this case we let the container register itself dynamically.
 
-Go to ECS cluster and start a new service
+
+### Use the loadbalancer with your Fargate service
+Go to ECS and create a new Task definition, name it nginx-alb-someUniqueName
+Use the same settings for the Nginx container but this time enable the loadbalancer option:
 
 ![alt text](https://github.com/terra10/codefest_ecsfargate/raw/master/lab05-loadbalancer/lab05-alb.png "ALB")
 

@@ -1,12 +1,37 @@
-# TERRA 10 Fargate Labs
+# TERRA 10 Fargate Labs (Theory)
 
-2do: uitleggen hoe het netwerk gedeelte eruit ziet OF we laten ze een eigen VPC aanmaken met subnets. Of we hebben al een Default VPC met IG en RT en laten alleen iedereen 2 x subnet aanmaken.
+## What is Amazon VPC? (Virtual Private Cloud)
+
+Amazon VPC lets you provision a logically isolated section of the Amazon Web Services (AWS) cloud where you can launch AWS resources in a virtual network that you define. You have complete control over your virtual networking environment, including selection of your own IP address ranges, creation of subnets, and configuration of route tables and network gateways. 
 
 ## Lab 001 -Network
+
+As this training is about Fargate and not setting up a network we have created this already.
+
+DEMO Private Subnet (AZ1)     10.0.64.0/19
+DEMO Private Subnet (AZ2)     10.0.96.0/19
+DEMO Public Subnet (AZ1)      10.0.0.0/19
+DEMO Public Subnet (AZ2)      10.0.32.0/19
+
+Each have more than enough available IP adresses.
+
+
+## How to do it outside this training
 
 Navigate to AWS VPC and make sure to be in the “ireland” region. That’s where the party is.
 
 https://eu-west-1.console.aws.amazon.com/vpc/home?region=eu-west-1#dashboard:
+This contains a default VPC out of the box.
+In this account you should see at least 2 VPCs.
+
+Each of them have 1 or more subnets. As mentioned abover we are using the DEMO subnets.
+
+## Using the wizard
+
+Go to:
+https://eu-west-1.console.aws.amazon.com/ecs/home?region=eu-west-1#/clusters
+
+Press **Create Cluster**
 
 As this training is Fargate we are going to setup a Networking only cluster.
 For now we are going to create a new VPC.
